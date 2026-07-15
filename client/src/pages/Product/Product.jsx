@@ -57,7 +57,7 @@ export default function Product() {
         {/* Gallery */}
         <div>
           <div className="overflow-hidden rounded-luxe bg-surface">
-            <img src={asset(images[active])} alt={p.name} className="aspect-[4/5] w-full object-cover" />
+            <img src={asset(images[active], 1200)} alt={p.name} className="aspect-[4/5] w-full object-cover" />
           </div>
           {images.length > 1 && (
             <div className="mt-4 flex gap-3">
@@ -69,7 +69,7 @@ export default function Product() {
                     active === i ? 'border-gold' : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img src={asset(img)} alt="" className="h-full w-full object-cover" />
+                  <img src={asset(img, 160)} alt="" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>

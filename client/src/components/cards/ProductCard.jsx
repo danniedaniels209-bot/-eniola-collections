@@ -12,7 +12,7 @@ export default function ProductCard({ product }) {
       <Link to={`/product/${product.slug}`} className="block overflow-hidden rounded-luxe bg-surface">
         <div className="relative aspect-[4/5] overflow-hidden">
           <img
-            src={asset(product.images?.[0])}
+            src={asset(product.images?.[0], 600)}
             alt={product.name}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105"

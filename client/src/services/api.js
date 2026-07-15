@@ -13,10 +13,18 @@ const ROOT = serverRoot()
 const API_URL = `${ROOT}/api`
 export const UPLOADS_URL = ROOT
 
-// Resolve a stored image path to an absolute URL. Local /images assets (shipped
+// Resolve a stored media path to an absolute URL. Local /images assets (shipped
 // in public/) are served by the client itself, so pass those through untouched.
-export const asset = (p) => {
+//
+// For Cloudinary URLs we inject `f_auto,q_auto` so it negotiates the best format
+// (WebP/AVIF) and quality per browser — a ~2MB PNG drops to ~150KB. `w_` caps
+// the delivered width so we never ship a 4000px image into a 290px card.
+export const asset = (p, width) => {
   if (!p) return ''
+  if (p.includes('res.cloudinary.com') && p.includes('/upload/')) {
+    const t = ['f_auto', 'q_auto', width && `w_${width}`, width && 'c_limit'].filter(Boolean).join(',')
+    return p.replace('/upload/', `/upload/${t}/`)
+  }
   if (p.startsWith('http') || p.startsWith('/images') || p.startsWith('/videos')) return p
   return `${UPLOADS_URL}${p}`
 }

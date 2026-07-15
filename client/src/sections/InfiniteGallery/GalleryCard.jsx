@@ -19,7 +19,7 @@ export default function GalleryCard({ product }) {
       }}
     >
       <img
-        src={asset(product.images?.[0])}
+        src={asset(product.images?.[0], 600)}
         alt={product.name}
         loading="lazy"
         draggable={false}
