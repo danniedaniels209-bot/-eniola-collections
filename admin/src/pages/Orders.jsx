@@ -30,7 +30,7 @@ export default function Orders() {
       <PageHeader title="Orders" subtitle="Accept, ship, deliver and track orders." />
 
       <div className="mb-4 flex gap-2">
-        <select className="input w-48" value={status} onChange={(e) => setStatus(e.target.value)}>
+        <select className="input w-full sm:w-48" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">All orders</option>
           {STATUSES.map((s) => (
             <option key={s} value={s}>
@@ -45,8 +45,8 @@ export default function Orders() {
       ) : items.length === 0 ? (
         <Empty>No orders yet.</Empty>
       ) : (
-        <div className="card overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="card overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
               <tr>
                 <th className="px-4 py-3">Order</th>

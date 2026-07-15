@@ -35,7 +35,7 @@ export default function Reviews() {
       <PageHeader title="Reviews" subtitle="Approve, reject, feature and reply to reviews." />
 
       <div className="mb-4 flex gap-2">
-        <select className="input w-48" value={status} onChange={(e) => setStatus(e.target.value)}>
+        <select className="input w-full sm:w-48" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">All reviews</option>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>

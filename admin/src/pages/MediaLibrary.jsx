@@ -86,9 +86,9 @@ export default function MediaLibrary() {
             e.preventDefault()
             load()
           }}
-          className="ml-auto flex gap-2"
+          className="flex w-full gap-2 sm:ml-auto sm:w-auto"
         >
-          <input className="input w-56" placeholder="Search filename…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input className="input w-full sm:w-56" placeholder="Search filename…" value={search} onChange={(e) => setSearch(e.target.value)} />
           <button className="btn-ghost">Search</button>
         </form>
       </div>

@@ -176,7 +176,7 @@ export default function ProductForm() {
             {form.images.length === 0 ? (
               <p className="text-sm text-slate">No images yet. First image becomes the cover.</p>
             ) : (
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {form.images.map((url, i) => (
                   <div key={url} className="group relative overflow-hidden rounded-lg border border-line">
                     <img src={asset(url)} alt="" className="aspect-square w-full object-cover" />

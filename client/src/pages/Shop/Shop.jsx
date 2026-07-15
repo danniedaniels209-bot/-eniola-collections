@@ -16,6 +16,7 @@ export default function Shop() {
   const [params, setParams] = useSearchParams()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [filtersOpen, setFiltersOpen] = useState(false)
 
   const category = params.get('category') || ''
   const sort = params.get('sort') || 'newest'
@@ -69,9 +70,18 @@ export default function Shop() {
         </h1>
       </header>
 
+      {/* Mobile filter toggle — keeps products above the fold on a phone. */}
+      <button
+        onClick={() => setFiltersOpen((v) => !v)}
+        className="mb-5 flex w-full items-center justify-between rounded-full border border-white/15 px-5 py-3 text-sm text-white lg:hidden"
+      >
+        <span>Filters &amp; Sort</span>
+        <span className={`transition-transform duration-300 ${filtersOpen ? 'rotate-180' : ''}`}>⌄</span>
+      </button>
+
       <div className="grid gap-10 lg:grid-cols-[220px_1fr]">
         {/* Filters */}
-        <aside className="space-y-8">
+        <aside className={`${filtersOpen ? 'block' : 'hidden'} space-y-8 lg:block`}>
           <FilterGroup title="Category">
             <FilterPill active={!category} onClick={() => setParam('category', '')}>All</FilterPill>
             {CATEGORIES.map((c) => (

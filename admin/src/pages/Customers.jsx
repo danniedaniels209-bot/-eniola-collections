@@ -50,7 +50,7 @@ export default function Customers() {
         }}
         className="mb-4 flex gap-2"
       >
-        <input className="input w-64" placeholder="Search name or email…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <input className="input w-full sm:w-64" placeholder="Search name or email…" value={search} onChange={(e) => setSearch(e.target.value)} />
         <button className="btn-ghost">Search</button>
       </form>
 
@@ -59,8 +59,8 @@ export default function Customers() {
       ) : items.length === 0 ? (
         <Empty>No customers yet.</Empty>
       ) : (
-        <div className="card overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="card overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
               <tr>
                 <th className="px-4 py-3">Name</th>

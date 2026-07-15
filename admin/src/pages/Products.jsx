@@ -51,14 +51,14 @@ export default function Products() {
           className="flex gap-2"
         >
           <input
-            className="input w-64"
+            className="input w-full sm:w-64"
             placeholder="Search products…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <button className="btn-ghost">Search</button>
         </form>
-        <select className="input w-40" value={status} onChange={(e) => setStatus(e.target.value)}>
+        <select className="input w-full sm:w-40" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">All statuses</option>
           <option value="published">Published</option>
           <option value="draft">Draft</option>
@@ -76,8 +76,8 @@ export default function Products() {
           </Link>
         </Empty>
       ) : (
-        <div className="card overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="card overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
               <tr>
                 <th className="px-4 py-3">Product</th>
