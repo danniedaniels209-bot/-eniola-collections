@@ -1,5 +1,17 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
-export const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL || 'http://localhost:5000'
+// Accepts any shape Render or a human might supply and normalises it to the
+// server root: with/without protocol, with/without a trailing "/api" or slash.
+// Render injects the API's RENDER_EXTERNAL_URL automatically (see render.yaml),
+// so no URL needs to be typed by hand in production.
+function serverRoot() {
+  let raw = import.meta.env.VITE_API_URL || import.meta.env.VITE_UPLOADS_URL || 'http://localhost:5000'
+  raw = raw.trim().replace(/\/+$/, '')
+  if (!/^https?:\/\//i.test(raw)) raw = `https://${raw}`
+  return raw.replace(/\/api$/i, '')
+}
+
+const ROOT = serverRoot()
+const API_URL = `${ROOT}/api`
+export const UPLOADS_URL = ROOT
 
 // Resolve a stored image path to an absolute URL. Local /images assets (shipped
 // in public/) are served by the client itself, so pass those through untouched.

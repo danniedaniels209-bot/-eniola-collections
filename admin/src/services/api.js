@@ -1,5 +1,16 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
-export const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL || 'http://localhost:5000'
+// Normalises whatever VITE_API_URL contains (with/without protocol, with or
+// without a trailing "/api" or slash) down to the server root. Render injects
+// the API's RENDER_EXTERNAL_URL automatically — see render.yaml.
+function serverRoot() {
+  let raw = import.meta.env.VITE_API_URL || import.meta.env.VITE_UPLOADS_URL || 'http://localhost:5000'
+  raw = raw.trim().replace(/\/+$/, '')
+  if (!/^https?:\/\//i.test(raw)) raw = `https://${raw}`
+  return raw.replace(/\/api$/i, '')
+}
+
+const ROOT = serverRoot()
+const API_URL = `${ROOT}/api`
+export const UPLOADS_URL = ROOT
 
 // Resolve a stored image path (e.g. /uploads/products/x.png) to an absolute URL.
 export const asset = (p) => (!p ? '' : p.startsWith('http') ? p : `${UPLOADS_URL}${p}`)
