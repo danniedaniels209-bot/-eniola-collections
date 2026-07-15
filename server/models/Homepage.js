@@ -12,6 +12,10 @@ const homepageSchema = new mongoose.Schema(
       default: 'Basic Tops · Crop Tops · Sneakers · Abayas · Hijabs · Everyday Essentials',
     },
     featuredProductIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    // Decorative imagery for the infinite sliding gallery. Deliberately NOT tied
+    // to products: it is a permanent showroom display the owner curates, so it
+    // never empties when the catalogue changes.
+    galleryImages: [String],
     categoryOrder: [String],
     banners: [
       {

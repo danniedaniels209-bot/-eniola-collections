@@ -8,6 +8,7 @@ export default function Homepage() {
   const [uploading, setUploading] = useState('')
   const videoRef = useRef()
   const imageRef = useRef()
+  const galleryRef = useRef()
 
   useEffect(() => {
     api.get('/homepage').then((d) => setForm(d.homepage))
@@ -23,6 +24,30 @@ export default function Homepage() {
     } finally {
       setUploading('')
     }
+  }
+
+  // The sliding gallery is decorative and owner-curated — it is not tied to the
+  // product catalogue, so it never empties when products change.
+  const addGalleryImages = async (e) => {
+    const files = e.target.files
+    if (!files?.length) return
+    setUploading('gallery')
+    try {
+      const d = await api.upload('products', files)
+      set('galleryImages', [...(form.galleryImages || []), ...d.files.map((f) => f.url)])
+    } finally {
+      setUploading('')
+      if (galleryRef.current) galleryRef.current.value = ''
+    }
+  }
+  const removeGalleryImage = (url) =>
+    set('galleryImages', (form.galleryImages || []).filter((u) => u !== url))
+  const moveGalleryImage = (i, dir) => {
+    const next = [...(form.galleryImages || [])]
+    const j = i + dir
+    if (j < 0 || j >= next.length) return
+    ;[next[i], next[j]] = [next[j], next[i]]
+    set('galleryImages', next)
   }
 
   const save = async (e) => {
@@ -78,6 +103,45 @@ export default function Homepage() {
             <input ref={imageRef} type="file" accept="image/*" hidden
               onChange={(e) => e.target.files[0] && uploadOne('hero', e.target.files[0], 'heroImage')} />
           </div>
+        </div>
+
+        {/* Infinite sliding gallery */}
+        <div className="card space-y-4 p-5 lg:col-span-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="font-semibold">Infinite Sliding Gallery</h2>
+              <p className="text-xs text-slate">
+                The moving showroom rows on the homepage. These stay exactly as you set them —
+                adding or deleting products never changes them.
+              </p>
+            </div>
+            <button type="button" onClick={() => galleryRef.current?.click()} className="btn-ghost text-xs">
+              {uploading === 'gallery' ? 'Uploading…' : '+ Add images'}
+            </button>
+            <input ref={galleryRef} type="file" accept="image/*" multiple hidden onChange={addGalleryImages} />
+          </div>
+
+          {(form.galleryImages?.length ?? 0) === 0 ? (
+            <p className="rounded-lg border border-dashed border-line p-6 text-center text-sm text-slate">
+              No gallery images yet. Add a few and they'll slide across the homepage.
+            </p>
+          ) : (
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-8">
+              {form.galleryImages.map((url, i) => (
+                <div key={url} className="group relative overflow-hidden rounded-lg border border-line">
+                  <img src={asset(url)} alt="" className="aspect-[3/4] w-full object-cover" />
+                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/60 px-1 py-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button type="button" onClick={() => moveGalleryImage(i, -1)} className="text-[10px] text-white">◀</button>
+                    <button type="button" onClick={() => removeGalleryImage(url)} className="text-[10px] text-red-300">✕</button>
+                    <button type="button" onClick={() => moveGalleryImage(i, 1)} className="text-[10px] text-white">▶</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-slate">
+            {form.galleryImages?.length ?? 0} image(s) — dealt across 3 rows moving in alternating directions.
+          </p>
         </div>
 
         <div className="card space-y-4 p-5">
