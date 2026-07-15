@@ -1,0 +1,65 @@
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+export const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL || 'http://localhost:5000'
+
+// Resolve a stored image path to an absolute URL. Local /images assets (shipped
+// in public/) are served by the client itself, so pass those through untouched.
+export const asset = (p) => {
+  if (!p) return ''
+  if (p.startsWith('http') || p.startsWith('/images') || p.startsWith('/videos')) return p
+  return `${UPLOADS_URL}${p}`
+}
+
+const tokenKey = 'eniola_token'
+export const getToken = () => localStorage.getItem(tokenKey)
+export const setToken = (t) => localStorage.setItem(tokenKey, t)
+export const clearToken = () => localStorage.removeItem(tokenKey)
+
+async function request(path, { method = 'GET', body } = {}) {
+  const headers = {}
+  const t = getToken()
+  if (t) headers.Authorization = `Bearer ${t}`
+  if (body) headers['Content-Type'] = 'application/json'
+
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  })
+
+  let data = null
+  try {
+    data = await res.json()
+  } catch {
+    /* no body */
+  }
+  if (!res.ok) {
+    if (res.status === 401) clearToken()
+    throw new Error(data?.message || `Request failed (${res.status})`)
+  }
+  return data
+}
+
+export const api = {
+  get: (p) => request(p),
+  post: (p, body) => request(p, { method: 'POST', body }),
+  put: (p, body) => request(p, { method: 'PUT', body }),
+  del: (p) => request(p, { method: 'DELETE' }),
+}
+
+// Build a WhatsApp URL from admin settings. Returns null when nothing is
+// configured (so buttons can hide instead of linking to a fake number).
+// A custom link (wa.me / bit.ly / chat.whatsapp.com) wins and is used as-is;
+// a message can only be pre-filled when a plain number is used.
+export const whatsappUrl = (whatsapp, message) => {
+  if (!whatsapp) return null
+  if (whatsapp.link) return whatsapp.link.startsWith('http') ? whatsapp.link : `https://${whatsapp.link}`
+  const number = (whatsapp.number || '').replace(/[^\d]/g, '')
+  if (!number) return null
+  const text = message || whatsapp.defaultMessage || ''
+  return `https://wa.me/${number}${text ? `?text=${encodeURIComponent(text)}` : ''}`
+}
+
+export const formatNaira = (n) =>
+  new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(
+    n || 0
+  )

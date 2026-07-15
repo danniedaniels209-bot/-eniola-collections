@@ -1,0 +1,59 @@
+# Render Blueprint — deploys the API (web service) + storefront & admin (static sites).
+# In production the API can use the mongodb+srv:// URI directly (Render's DNS resolves SRV).
+services:
+  - type: web
+    name: eniola-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: MONGODB_URI
+        sync: false # set in the Render dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES
+        value: 7d
+      - key: CLIENT_URL
+        sync: false
+      - key: ADMIN_URL
+        sync: false
+      # Cloudinary — keeps uploaded media off Render's ephemeral disk.
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+  - type: web
+    name: eniola-client
+    runtime: static
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false # e.g. https://eniola-api.onrender.com/api
+      - key: VITE_UPLOADS_URL
+        sync: false # e.g. https://eniola-api.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: eniola-admin
+    runtime: static
+    rootDir: admin
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_UPLOADS_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
