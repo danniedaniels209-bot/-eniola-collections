@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api, asset } from '../services/api'
-import { PageHeader, Spinner, StatusBadge, Empty, naira } from '../components/ui'
+import { PageHeader, Spinner, StatusBadge, Empty, naira, DesktopTable, MobileList, MobileRow, Field } from '../components/ui'
 
 export default function Products() {
   const [items, setItems] = useState(null)
@@ -76,8 +76,38 @@ export default function Products() {
           </Link>
         </Empty>
       ) : (
-        <div className="card overflow-x-auto">
-          <table className="w-full min-w-[720px] text-sm">
+        <>
+        {/* Mobile: stacked cards */}
+        <MobileList>
+          {items.map((p) => (
+            <MobileRow key={p._id}>
+              <div className="flex gap-3">
+                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-canvas">
+                  {p.images?.[0] && <img src={asset(p.images[0])} alt="" className="h-full w-full object-cover" />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-ink">{p.name}</p>
+                  <p className="text-xs text-slate">{p.sku || '—'} · {p.category || 'Uncategorised'}</p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <StatusBadge status={p.status} />
+                    <span className={`text-xs ${p.stock === 0 ? 'text-red-600' : 'text-slate'}`}>
+                      {p.stock} in stock
+                    </span>
+                  </div>
+                </div>
+                <span className="whitespace-nowrap text-sm font-medium">{naira(p.discountPrice ?? p.price)}</span>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2 border-t border-line pt-3">
+                <Link to={`/products/${p._id}`} className="btn-ghost flex-1 px-2.5 py-1.5 text-xs">Edit</Link>
+                <button onClick={() => duplicate(p._id)} className="btn-ghost flex-1 px-2.5 py-1.5 text-xs">Duplicate</button>
+                <button onClick={() => remove(p._id)} className="btn-danger flex-1 px-2.5 py-1.5 text-xs">Delete</button>
+              </div>
+            </MobileRow>
+          ))}
+        </MobileList>
+
+        {/* Desktop: table */}
+        <DesktopTable>
             <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
               <tr>
                 <th className="px-4 py-3">Product</th>
@@ -128,8 +158,8 @@ export default function Products() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
+        </DesktopTable>
+        </>
       )}
     </div>
   )

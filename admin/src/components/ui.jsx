@@ -50,6 +50,35 @@ export function StatusBadge({ status }) {
   return <span className={`badge ${STATUS_STYLES[status] || 'bg-gray-100 text-gray-600'}`}>{status}</span>
 }
 
+// Tables don't fit a phone, so every list renders as a table from `md` up and as
+// stacked cards below it. Wrap the <table> in <DesktopTable> and the card list
+// in <MobileList> so the two stay visually paired.
+export function DesktopTable({ children }) {
+  return (
+    <div className="card hidden overflow-hidden md:block">
+      <table className="w-full text-sm">{children}</table>
+    </div>
+  )
+}
+
+export function MobileList({ children }) {
+  return <div className="space-y-3 md:hidden">{children}</div>
+}
+
+export function MobileRow({ children }) {
+  return <div className="card p-4">{children}</div>
+}
+
+// Label/value line inside a mobile card.
+export function Field({ label, children }) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-1 text-sm">
+      <span className="text-xs uppercase tracking-wide text-slate">{label}</span>
+      <span className="text-right">{children}</span>
+    </div>
+  )
+}
+
 export const naira = (n) =>
   new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(
     n || 0

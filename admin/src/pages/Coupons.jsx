@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../services/api'
-import { PageHeader, Spinner, Empty } from '../components/ui'
+import { PageHeader, Spinner, Empty, DesktopTable, MobileList, MobileRow } from '../components/ui'
 
 const BLANK = { code: '', type: 'percentage', value: 10, minPurchase: '', expiresAt: '', usageLimit: '', active: true }
 
@@ -75,8 +75,37 @@ export default function Coupons() {
       ) : items.length === 0 ? (
         <Empty>No coupons yet.</Empty>
       ) : (
-        <div className="card overflow-x-auto">
-          <table className="w-full min-w-[720px] text-sm">
+        <>
+        <MobileList>
+          {items.map((c) => (
+            <MobileRow key={c._id}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-mono font-medium text-ink">{c.code}</p>
+                  <p className="text-xs text-slate">
+                    {c.type === 'percentage' ? `${c.value}% off` : `₦${c.value} off`}
+                    {c.minPurchase ? ` · min ₦${c.minPurchase}` : ''}
+                  </p>
+                  <p className="text-xs text-slate">
+                    Used {c.usedCount}{c.usageLimit ? ` / ${c.usageLimit}` : ''}
+                    {c.expiresAt ? ` · expires ${new Date(c.expiresAt).toLocaleDateString()}` : ''}
+                  </p>
+                </div>
+                <span className={`badge ${c.active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                  {c.active ? 'Active' : 'Off'}
+                </span>
+              </div>
+              <div className="mt-3 flex gap-2 border-t border-line pt-3">
+                <button onClick={() => toggle(c)} className="btn-ghost flex-1 px-2 py-1.5 text-xs">
+                  {c.active ? 'Disable' : 'Enable'}
+                </button>
+                <button onClick={() => remove(c._id)} className="btn-danger flex-1 px-2 py-1.5 text-xs">Delete</button>
+              </div>
+            </MobileRow>
+          ))}
+        </MobileList>
+
+        <DesktopTable>
             <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
               <tr>
                 <th className="px-4 py-3">Code</th>
@@ -110,8 +139,8 @@ export default function Coupons() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
+        </DesktopTable>
+        </>
       )}
     </div>
   )

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../services/api'
-import { PageHeader, Spinner, StatusBadge, Empty, naira } from '../components/ui'
+import { PageHeader, Spinner, StatusBadge, Empty, naira, DesktopTable, MobileList, MobileRow } from '../components/ui'
 
 const STATUSES = ['pending', 'accepted', 'packed', 'shipped', 'delivered', 'cancelled', 'refunded']
 
@@ -45,8 +45,42 @@ export default function Orders() {
       ) : items.length === 0 ? (
         <Empty>No orders yet.</Empty>
       ) : (
-        <div className="card overflow-x-auto">
-          <table className="w-full min-w-[720px] text-sm">
+        <>
+        <MobileList>
+          {items.map((o) => (
+            <MobileRow key={o._id}>
+              <div onClick={() => setSelected(o)} className="cursor-pointer">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-ink">{o.orderNumber}</p>
+                    <p className="truncate text-xs text-slate">
+                      {o.customer?.name || o.contact?.name || 'Guest'}
+                    </p>
+                  </div>
+                  <span className="whitespace-nowrap text-sm font-medium">{naira(o.total)}</span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <StatusBadge status={o.status} />
+                  <StatusBadge status={o.paymentStatus} />
+                </div>
+              </div>
+              <div className="mt-3 border-t border-line pt-3">
+                <label className="mb-1 block text-xs uppercase tracking-wide text-slate">Update status</label>
+                <select
+                  className="input"
+                  value={o.status}
+                  onChange={(e) => setOrderStatus(o._id, e.target.value)}
+                >
+                  {STATUSES.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+            </MobileRow>
+          ))}
+        </MobileList>
+
+        <DesktopTable>
             <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
               <tr>
                 <th className="px-4 py-3">Order</th>
@@ -85,8 +119,8 @@ export default function Orders() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
+        </DesktopTable>
+        </>
       )}
 
       {selected && (

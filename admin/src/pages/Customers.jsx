@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../services/api'
-import { PageHeader, Spinner, Empty, naira } from '../components/ui'
+import { PageHeader, Spinner, Empty, naira, DesktopTable, MobileList, MobileRow } from '../components/ui'
 
 export default function Customers() {
   const [items, setItems] = useState(null)
@@ -59,8 +59,35 @@ export default function Customers() {
       ) : items.length === 0 ? (
         <Empty>No customers yet.</Empty>
       ) : (
-        <div className="card overflow-x-auto">
-          <table className="w-full min-w-[720px] text-sm">
+        <>
+        <MobileList>
+          {items.map((u) => (
+            <MobileRow key={u._id}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-ink">{u.name}</p>
+                  <p className="truncate text-xs text-slate">{u.email}</p>
+                  <p className="text-xs text-slate">{u.phone || 'no phone'}</p>
+                </div>
+                {u.suspended ? (
+                  <span className="badge bg-red-50 text-red-600">Suspended</span>
+                ) : (
+                  <span className="badge bg-green-50 text-green-700">Active</span>
+                )}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2 border-t border-line pt-3">
+                <button onClick={() => open(u._id)} className="btn-ghost flex-1 px-2 py-1.5 text-xs">View</button>
+                <button onClick={() => edit(u)} className="btn-ghost flex-1 px-2 py-1.5 text-xs">Edit</button>
+                <button onClick={() => suspend(u)} className="btn-ghost flex-1 px-2 py-1.5 text-xs">
+                  {u.suspended ? 'Unsuspend' : 'Suspend'}
+                </button>
+                <button onClick={() => remove(u)} className="btn-danger flex-1 px-2 py-1.5 text-xs">Delete</button>
+              </div>
+            </MobileRow>
+          ))}
+        </MobileList>
+
+        <DesktopTable>
             <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
               <tr>
                 <th className="px-4 py-3">Name</th>
@@ -96,8 +123,8 @@ export default function Customers() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
+        </DesktopTable>
+        </>
       )}
 
       {detail && (

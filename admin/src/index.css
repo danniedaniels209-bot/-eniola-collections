@@ -5,6 +5,8 @@
 body {
   @apply bg-canvas text-ink font-sans antialiased;
   margin: 0;
+  /* Safety net: nothing should ever scroll the page sideways on mobile. */
+  overflow-x: hidden;
 }
 
 .card {

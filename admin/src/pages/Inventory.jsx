@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, asset } from '../services/api'
-import { PageHeader, Spinner } from '../components/ui'
+import { PageHeader, Spinner, DesktopTable, MobileList, MobileRow } from '../components/ui'
 
 export default function Inventory() {
   const [data, setData] = useState(null)
@@ -31,8 +31,34 @@ export default function Inventory() {
         </div>
       )}
 
-      <div className="card overflow-x-auto">
-        <table className="w-full min-w-[720px] text-sm">
+      <MobileList>
+        {data.items.map((p) => (
+          <MobileRow key={p._id}>
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-canvas">
+                {p.images?.[0] && <img src={asset(p.images[0])} alt="" className="h-full w-full object-cover" />}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-ink">{p.name}</p>
+                <p className="text-xs text-slate">{p.sku || '—'}</p>
+              </div>
+              <span className={`text-sm ${p.stock === 0 ? 'font-semibold text-red-600' : ''}`}>{p.stock}</span>
+            </div>
+            <form
+              className="mt-3 flex gap-2 border-t border-line pt-3"
+              onSubmit={(e) => {
+                e.preventDefault()
+                update(p._id, e.target.stock.value)
+              }}
+            >
+              <input name="stock" type="number" defaultValue={p.stock} className="input" />
+              <button className="btn-ghost whitespace-nowrap px-3 text-xs">Save</button>
+            </form>
+          </MobileRow>
+        ))}
+      </MobileList>
+
+      <DesktopTable>
           <thead className="border-b border-line bg-canvas text-left text-xs uppercase tracking-wide text-slate">
             <tr>
               <th className="px-4 py-3">Product</th>
@@ -71,8 +97,7 @@ export default function Inventory() {
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+      </DesktopTable>
     </div>
   )
 }
