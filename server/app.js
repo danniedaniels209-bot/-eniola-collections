@@ -5,6 +5,7 @@ import path from 'path'
 import mongoose from 'mongoose'
 import { fileURLToPath } from 'url'
 import { connectDB } from './config/db.js'
+import { cloudinaryEnabled, cloudinaryStatus, verifyCloudinary } from './config/cloudinary.js'
 import apiRoutes from './routes/index.js'
 import { notFound, errorHandler } from './middleware/error.js'
 
@@ -53,7 +54,15 @@ app.get('/health', (req, res) => {
       state: states[mongoose.connection.readyState] ?? 'unknown',
       lastError: dbError || null,
     },
-    cloudinary: Boolean(process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_URL),
+    cloudinary: {
+      configured: cloudinaryEnabled,
+      // credentialsValid:false means uploads will fail with "Invalid Signature".
+      credentialsValid: cloudinaryStatus.valid,
+      error: cloudinaryStatus.error,
+      cloudName: (process.env.CLOUDINARY_CLOUD_NAME || '').trim() || null,
+      apiKey: (process.env.CLOUDINARY_API_KEY || '').trim() || null,
+      apiSecretLength: (process.env.CLOUDINARY_API_SECRET || '').trim().length || 0,
+    },
   })
 })
 app.use('/api', apiRoutes)
@@ -70,6 +79,7 @@ connectDB()
     dbError = e.message
   })
   .finally(() => {
+    verifyCloudinary() // async; result surfaces in /health and the logs
     app.listen(PORT, () => console.log(`🚀 API on port ${PORT}`))
   })
 
