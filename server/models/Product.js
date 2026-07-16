@@ -19,7 +19,8 @@ const productSchema = new mongoose.Schema(
     bestSeller: { type: Boolean, default: false },
     newArrival: { type: Boolean, default: false },
     // Lifecycle: draft/published control public visibility; archived hides everywhere.
-    status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft' },
+    // Defaults to published — an owner adding a product expects it to appear.
+    status: { type: String, enum: ['draft', 'published', 'archived'], default: 'published' },
     ratingAvg: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
   },

@@ -18,7 +18,8 @@ const BLANK = {
   featured: false,
   bestSeller: false,
   newArrival: false,
-  status: 'draft',
+  // Published by default so a new product is live as soon as it's saved.
+  status: 'published',
 }
 
 // Comma-joined string <-> array helpers for the tag-like fields.
@@ -206,10 +207,15 @@ export default function ProductForm() {
             <div>
               <label className="label">Status</label>
               <select className="input" value={form.status} onChange={(e) => set('status', e.target.value)}>
-                <option value="draft">Draft (hidden)</option>
-                <option value="published">Published</option>
-                <option value="archived">Archived</option>
+                <option value="published">Published — live on the website</option>
+                <option value="draft">Draft — hidden from customers</option>
+                <option value="archived">Archived — hidden everywhere</option>
               </select>
+              <p className={`mt-1.5 text-xs ${form.status === 'published' ? 'text-green-600' : 'text-amber-600'}`}>
+                {form.status === 'published'
+                  ? '✓ Customers can see and buy this product.'
+                  : '⚠️ This product will NOT appear on the website.'}
+              </p>
             </div>
             <div>
               <label className="label">Category</label>
