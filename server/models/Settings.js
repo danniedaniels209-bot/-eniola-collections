@@ -30,6 +30,16 @@ const settingsSchema = new mongoose.Schema(
       cod: { type: Boolean, default: true },
       bankTransfer: { type: Boolean, default: false },
     },
+    // Shown to customers who choose Bank Transfer at checkout.
+    bankDetails: {
+      accountNumber: { type: String, default: '' },
+      accountName: { type: String, default: '' },
+      bankName: { type: String, default: '' },
+      instructions: {
+        type: String,
+        default: 'Send your payment receipt via WhatsApp to confirm your order.',
+      },
+    },
     delivery: {
       fee: { type: Number, default: 2500 },
       freeShippingThreshold: { type: Number, default: 100000 },

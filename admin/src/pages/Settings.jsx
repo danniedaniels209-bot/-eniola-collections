@@ -76,6 +76,15 @@ export default function Settings() {
           <Toggle path="payments.flutterwave" label="Flutterwave" />
           <Toggle path="payments.cod" label="Cash on Delivery" />
           <Toggle path="payments.bankTransfer" label="Bank Transfer" />
+
+          <h2 className="pt-3 font-semibold">Bank Transfer Details</h2>
+          <p className="text-xs text-slate">
+            Shown to customers at checkout when they choose Bank Transfer.
+          </p>
+          <Field label="Account Number" value={s.bankDetails?.accountNumber} onChange={(v) => set('bankDetails.accountNumber', v)} />
+          <Field label="Account Name" value={s.bankDetails?.accountName} onChange={(v) => set('bankDetails.accountName', v)} />
+          <Field label="Bank Name" value={s.bankDetails?.bankName} onChange={(v) => set('bankDetails.bankName', v)} />
+          <Field label="Instructions" value={s.bankDetails?.instructions} onChange={(v) => set('bankDetails.instructions', v)} />
         </div>
 
         {/* Delivery + WhatsApp */}

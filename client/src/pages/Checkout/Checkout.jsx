@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { api, formatNaira } from '../../services/api'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
+import BankDetails from '../../components/ui/BankDetails'
 
 const PAY_LABELS = {
   paystack: 'Paystack',
@@ -79,6 +80,12 @@ export default function Checkout() {
           Thank you, {done.contact?.name}. Your order <span className="text-gold">{done.orderNumber}</span> has been received.
         </p>
         <p className="mt-1 text-sm text-muted">Total: {formatNaira(done.total)} · {PAY_LABELS[done.paymentMethod] || done.paymentMethod}</p>
+
+        {/* Repeat the account details so the customer can still pay after ordering. */}
+        {done.paymentMethod === 'bank_transfer' && (
+          <BankDetails bank={settings?.bankDetails} className="mt-8 text-left" />
+        )}
+
         <Link to="/shop" className="mt-8 inline-block rounded-full bg-white px-8 py-[15px] text-sm font-semibold text-obsidian hover:scale-[1.03]">
           Continue Shopping
         </Link>
@@ -145,6 +152,7 @@ export default function Checkout() {
                 You'll be redirected to complete payment securely. (Gateway keys are configured in production.)
               </p>
             )}
+            {paymentMethod === 'bank_transfer' && <BankDetails bank={settings?.bankDetails} />}
           </Section>
         </div>
 
